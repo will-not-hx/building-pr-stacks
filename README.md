@@ -1,19 +1,30 @@
 # building-pr-stacks
 
-A [Claude Code skill](https://code.claude.com/docs/en/skills) for splitting a large change into
-a chain of stacked pull requests a reviewer can actually read — one layer at a time, each one
-green on its own.
+An agent skill for splitting a large change into a chain of stacked pull requests a reviewer
+can actually read — one layer at a time, each one green on its own. Compatible with
+[Claude Code](https://code.claude.com/docs/en/skills) and Codex.
 
 ## Install
+
+### Claude Code
 
 ```sh
 git clone https://github.com/will-not-hx/building-pr-stacks.git \
   ~/.claude/skills/building-pr-stacks
 ```
 
-Claude Code picks it up from the frontmatter description, and invokes it when work is too large
-for one PR, when a reviewer has asked for something smaller, or when a stacked PR's base has
-moved because a layer below it merged or took review changes.
+### Codex
+
+```sh
+mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
+git clone https://github.com/will-not-hx/building-pr-stacks.git \
+  "${CODEX_HOME:-$HOME/.codex}/skills/building-pr-stacks"
+```
+
+Both tools discover the skill from the description in `SKILL.md` and can invoke it when work is
+too large for one PR, when a reviewer has asked for something smaller, or when a stacked PR's
+base has moved because a layer below it merged or took review changes. In Codex, you can also
+invoke it explicitly with `$building-pr-stacks`.
 
 ## What it does
 

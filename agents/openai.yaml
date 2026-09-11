@@ -1,0 +1,4 @@
+interface:
+  display_name: "Building PR Stacks"
+  short_description: "Split large changes into reviewable PR stacks"
+  default_prompt: "Use $building-pr-stacks to split this change into an independently green, reviewable stack of pull requests."
