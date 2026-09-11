@@ -28,14 +28,20 @@ invoke it explicitly with `$building-pr-stacks`.
 
 ## What it does
 
-Two separate things make a stack reviewable, and only one of them comes naturally.
+Three separate things make a stack reviewable, and only one of them comes naturally.
 
 The first is the split. Given a large diff, a capable agent will already find reasonable seams —
 domain types, then the client, then the mapper, then the wiring, then the endpoint — and will
 work out on its own that the CHANGELOG belongs in the top PR so the layers don't all conflict on
 the same lines.
 
-The second is the **furniture**: the thing that tells a reviewer where they are in the chain.
+The second is the reason each layer exists. A preparatory PR can be valuable because it isolates a
+mechanical refactor, but *"in preparation for later work"* is not enough: its description must
+name the immediate capability, the current constraint, the duplication or coupling it prevents,
+and why reviewing it separately helps. If that case cannot be made, the layer belongs with its
+consumer.
+
+The third is the **furniture**: the thing that tells a reviewer where they are in the chain.
 That is what goes missing. The skill supplies it as a required, copy-paste block — a `# | PR |
 Base` table with a 👉 on the PR being read, "merge bottom-up", and an explicit claim that every
 branch passes its suites alone — plus the naming scheme that makes position visible in a PR

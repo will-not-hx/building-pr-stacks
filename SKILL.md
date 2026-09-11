@@ -9,7 +9,7 @@ description: Use when work is too large for one pull request, when a reviewer ha
 
 A stack is one linear chain of PRs, each based on the one below it, each **independently green**. The reviewer holds one layer at a time and can approve it without trusting the layers above.
 
-Two things make a stack reviewable, and agents reliably supply only the first: the split, and the furniture that tells a reviewer where they are in it. **The Stack block below is required in every body.**
+Three things make a stack reviewable: the split, each layer's reason to exist, and the furniture that tells a reviewer where they are in the chain. Agents reliably supply the split; they can still leave a preparatory PR unexplained even when its Stack table is perfect. **The Stack block below is required in every body.**
 
 ## When to use
 
@@ -27,6 +27,7 @@ One PR per layer, dependencies pointing downward, so no layer needs the ones abo
 |---|---|
 | A tooling or lint gate lands **first**, carrying the file that trips the rule | Landing it last re-churns every layer below it; separating override from offending file leaves one of the two branches red |
 | A spike that proves an upstream assumption goes **below** what relies on it | The reviewer sees the evidence before the code betting on it |
+| A preparatory or no-public-behaviour layer names its immediate consumer in the PR body | Independently green makes the layer safe, not self-explanatory. State the capability it enables, the current constraint, the duplication, coupling or risk it prevents, and why separate review helps. If that case cannot be made, fold it into its consumer |
 | The endpoint or entrypoint lands **last** | Layers below have no caller, so merging them changes no behaviour |
 | An interface change lands **with its implementers**, or lands **optional** | A required port method with no implementer breaks compilation. `getState?:` plus a comment naming the layer that promotes it to required lets the contract land first — what ABC-123 (1/5) does |
 | CHANGELOG and version bump go in the **last** PR only | Otherwise every layer conflicts on the same lines, and the version advertises an endpoint that isn't callable |
@@ -53,7 +54,7 @@ Each branch is the base of the next.
 
 Bottom of the body, after a `---`. Fill every slot; the 👉 marks the PR being read.
 
-The table cites numbers that don't exist until the chain is open, so it lands in **two passes**: post the bodies without a Stack section at all, then one `gh pr edit --body-file` per PR adding the finished table. The second pass is part of opening the stack. Never post a table of placeholder numbers.
+The table cites numbers that don't exist until the chain is open, so it lands in **two passes**: post the bodies without a Stack section at all, then one `gh pr edit --body-file` per PR adding the finished table. The second pass is part of opening the stack. Never post a table of placeholder numbers. In that second pass, also replace prose such as *"the next layer"* with a link to the real consuming PR, especially in preparatory layers.
 
 ```markdown
 ---
@@ -134,6 +135,7 @@ Then **refresh the Stack table in every body** — the Base column and the 👉 
 | `Add the domain types (ABC-123)` | `ABC-123 (1/5): Add state domain types and port method` |
 | Branch `ABC-123-4-route` on PR 5 | Branch number matches PR number |
 | A parallel PR off `staging` mid-chain | One linear chain |
+| "Extract shared helper for future work" | Name the immediate consuming layer, why the current code cannot support it cleanly, what duplication or coupling the refactor avoids, and why it is easier to review separately |
 | "Every branch is green" (unrun) | Run build and tests on each branch, or drop the line |
 | A body posted with `<n>` placeholders | Counts read off an actual run |
 | Retargeting and rebasing after every merge by reflex | Check the repo's merge strategy first — a merge-commit repo needs neither |
