@@ -23,6 +23,14 @@ Not for: a change with one seam (open one PR), or unrelated changes (open separa
 
 One PR per layer, dependencies pointing downward, so no layer needs the ones above it to compile or pass.
 
+### Preserve quality when splitting
+
+Splitting PRs changes review size, not the quality bar. Every layer must preserve appropriate code ownership, repository conventions, validation, error handling, tests and release checks. Passing CI alone does not make a split sound.
+
+Do not put a server-owned schema in a client folder, duplicate a contract, weaken tests or move files outside a version gate just to make a preparatory PR independently green. Keep related ownership and dependency changes together. If a seam requires a quality compromise, move the seam or combine the PRs; a later cleanup PR is not justification for introducing it.
+
+Check both each intermediate layer and the completed stack. Preparation can be unused until its consumer lands, but it must still be maintainable in its own right.
+
 | Rule | Why |
 |---|---|
 | A tooling or lint gate lands **first**, carrying the file that trips the rule | Landing it last re-churns every layer below it; separating override from offending file leaves one of the two branches red |
@@ -30,7 +38,7 @@ One PR per layer, dependencies pointing downward, so no layer needs the ones abo
 | A preparatory or no-public-behaviour layer names its immediate consumer in the PR body | Independently green makes the layer safe, not self-explanatory. State the capability it enables, the current constraint, the duplication, coupling or risk it prevents, and why separate review helps. If that case cannot be made, fold it into its consumer |
 | The endpoint or entrypoint lands **last** | Layers below have no caller, so merging them changes no behaviour |
 | An interface change lands **with its implementers**, or lands **optional** | A required port method with no implementer breaks compilation. `getState?:` plus a comment naming the layer that promotes it to required lets the contract land first — what ABC-123 (1/5) does |
-| CHANGELOG and version bump go in the **last** PR only | Otherwise every layer conflicts on the same lines, and the version advertises an endpoint that isn't callable |
+| CHANGELOG and version bumps follow the repository's release rules and the layer that needs them | Usually the final endpoint layer; earlier public changes may need their own. Do not bypass a gate or misplace code to reserve the bump for the last PR |
 
 Sanity check: roughly 50–550 production lines and under ~10 files per layer. Past that, look for the seam you missed.
 
