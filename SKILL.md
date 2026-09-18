@@ -64,6 +64,8 @@ Bottom of the body, after a `---`. Fill every slot; the 👉 marks the PR being 
 
 The table cites numbers that don't exist until the chain is open, so it lands in **two passes**: post the bodies without a Stack section at all, then one `gh pr edit --body-file` per PR adding the finished table. The second pass is part of opening the stack. Never post a table of placeholder numbers. In that second pass, also replace prose such as *"the next layer"* with a link to the real consuming PR, especially in preparatory layers.
 
+The ticket link in the Stack block is necessary but not sufficient context. Every body also links the authoritative material relevant to that layer — for example the current HLD or architecture decision, external or vendor specification, counterpart implementation, immediate consuming PR, and tracked follow-up. Put each link beside the claim it supports rather than collecting bare links at the bottom.
+
 ```markdown
 ---
 
@@ -98,7 +100,18 @@ Run them on each branch or delete the line.
 
 For everything else in the body, use the `writing-pr-descriptions` skill.
 
-## 4. Build it
+## 4. Verification in every layer
+
+Every PR body includes both:
+
+1. **Automated verification** — commands and actual results for that branch, including any nested suite its files require.
+2. **Manual testing** — prerequisites or test data, the action to perform, and the expected result for the behaviour that layer owns.
+
+Keep manual testing proportional to the layer. A user-facing or integration layer describes the real journey. A lower transport or persistence layer describes the narrow path that exercises its contract. When a preparatory layer has no independently reachable behaviour, say that manual execution does not apply yet and give the reviewer a concrete inspection path; also link the consuming PR whose manual journey exercises it. Do not claim a live check was performed unless it was.
+
+The completed top layer includes an end-to-end manual journey for the whole stack, not only a repeat of the automated commands.
+
+## 5. Build it
 
 Splitting a branch that is already finished — keep it as the reference and restore file subsets from it:
 
@@ -124,7 +137,7 @@ Open the whole chain at once so the reviewer sees the shape, then make the table
 
 Don't push the `-full` reference branch, and delete it only once the top of the stack has merged.
 
-## 5. Restack when a base moves
+## 6. Restack when a base moves
 
 | What happened | Do this |
 |---|---|
@@ -145,5 +158,7 @@ Then **refresh the Stack table in every body** — the Base column and the 👉 
 | A parallel PR off `staging` mid-chain | One linear chain |
 | "Extract shared helper for future work" | Name the immediate consuming layer, why the current code cannot support it cleanly, what duplication or coupling the refactor avoids, and why it is easier to review separately |
 | "Every branch is green" (unrun) | Run build and tests on each branch, or drop the line |
+| Only the ticket and Stack table are linked | Link the HLD, specification, decision, counterpart or follow-up beside the claim it supports in each affected body |
+| Automated commands are presented as complete testing instructions | Add manual prerequisites, action and expected result for each layer; if it is not independently reachable, explain that and provide an inspection path |
 | A body posted with `<n>` placeholders | Counts read off an actual run |
 | Retargeting and rebasing after every merge by reflex | Check the repo's merge strategy first — a merge-commit repo needs neither |
