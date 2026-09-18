@@ -47,6 +47,12 @@ Base` table with a 👉 on the PR being read, "merge bottom-up", and an explicit
 branch passes its suites alone — plus the naming scheme that makes position visible in a PR
 list (`ABC-123 (3/5): …`) and keeps branch numbers agreeing with PR numbers.
 
+Every layer also carries its own evidence: links to the authoritative context relevant to that
+diff, automated commands with actual results, and manual testing instructions with
+prerequisites, action and expected result. A preparatory layer that is not independently
+reachable says so and gives a concrete inspection path; the top layer describes the end-to-end
+manual journey for the completed stack.
+
 It also covers the part that actually hurts: restacking. What to run depends on what happened,
 and the four cases have genuinely different answers — a layer merging in a merge-commit repo
 needs no rebase at all, while the same event in a squash repo rewrites the parent's commits and
